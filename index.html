@@ -215,6 +215,15 @@
                         <label data-en="Message" data-es="Mensaje" data-fr="Message">Message</label>
                         <textarea name="message" rows="5" placeholder="Parlez-nous de vous..."></textarea>
                     </div>
+                    <div class="form-group">
+                        <label data-en="Upload CV" data-es="Cargar CV" data-fr="Télécharger CV">Télécharger votre CV</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="cv-file" name="cv" accept=".pdf,.doc,.docx" required>
+                            <label for="cv-file" class="file-label" data-en="Choose file" data-es="Seleccionar archivo" data-fr="Choisir un fichier">Choisir un fichier</label>
+                            <span class="file-name" data-en="No file selected" data-es="Ningún archivo seleccionado" data-fr="Aucun fichier sélectionné">Aucun fichier sélectionné</span>
+                        </div>
+                        <small style="color: #666; margin-top: 8px; display: block;" data-en="Accepted formats: PDF, DOC, DOCX (Max 5MB)" data-es="Formatos aceptados: PDF, DOC, DOCX (Máximo 5MB)" data-fr="Formats acceptés: PDF, DOC, DOCX (Max 5MB)">Formats acceptés: PDF, DOC, DOCX (Max 5MB)</small>
+                    </div>
                     <button type="submit" class="submit-btn" data-en="Submit Application" data-es="Enviar Candidatura" data-fr="Soumettre">Soumettre</button>
                 </form>
             </div>
@@ -397,13 +406,43 @@
             event.preventDefault();
             
             const form = event.target;
+            const fileInput = document.getElementById('cv-file');
             const formData = new FormData(form);
+            
+            // Validate file
+            if (!fileInput.files || fileInput.files.length === 0) {
+                const currentLang = document.documentElement.lang || 'fr';
+                const errorMessages = {
+                    'fr': 'Veuillez télécharger votre CV',
+                    'en': 'Please upload your CV',
+                    'es': 'Por favor carga tu CV'
+                };
+                alert(errorMessages[currentLang]);
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file.size > maxSize) {
+                const currentLang = document.documentElement.lang || 'fr';
+                const errorMessages = {
+                    'fr': 'Le fichier est trop volumineux (max 5MB)',
+                    'en': 'File is too large (max 5MB)',
+                    'es': 'El archivo es demasiado grande (máximo 5MB)'
+                };
+                alert(errorMessages[currentLang]);
+                return;
+            }
+
             const data = {
                 fullname: formData.get('fullname'),
                 email: formData.get('email'),
                 phone: formData.get('phone'),
                 position: formData.get('position'),
-                message: formData.get('message')
+                message: formData.get('message'),
+                cv_file: file.name,
+                cv_size: (file.size / 1024).toFixed(2) + ' KB'
             };
 
             // Simulate form submission
@@ -412,12 +451,39 @@
             // Show success message
             const currentLang = document.documentElement.lang || 'fr';
             const successMessages = {
-                'fr': 'Merci pour votre candidature ! Nous vous recontacterons bientôt.',
-                'en': 'Thank you for your application! We will contact you soon.',
-                'es': '¡Gracias por tu candidatura! Nos pondremos en contacto pronto.'
+                'fr': 'Merci pour votre candidature ! Nous avons reçu votre CV et vous recontacterons bientôt.',
+                'en': 'Thank you for your application! We received your CV and will contact you soon.',
+                'es': '¡Gracias por tu candidatura! Recibimos tu CV y nos pondremos en contacto pronto.'
             };
 
             alert(successMessages[currentLang]);
             form.reset();
+            document.querySelector('.file-name').textContent = document.querySelector('.file-name').getAttribute('data-' + currentLang);
         }
+
+        // Handle file input change
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('cv-file');
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const fileName = this.files[0]?.name || '';
+                    const fileNameSpan = document.querySelector('.file-name');
+                    if (fileName) {
+                        fileNameSpan.textContent = fileName;
+                        fileNameSpan.style.color = '#0078d4';
+                        fileNameSpan.style.fontWeight = '500';
+                    } else {
+                        const currentLang = document.documentElement.lang || 'fr';
+                        const noFileMessages = {
+                            'fr': 'Aucun fichier sélectionné',
+                            'en': 'No file selected',
+                            'es': 'Ningún archivo seleccionado'
+                        };
+                        fileNameSpan.textContent = noFileMessages[currentLang];
+                        fileNameSpan.style.color = '#666';
+                        fileNameSpan.style.fontWeight = 'normal';
+                    }
+                });
+            }
+        });
     </script>
