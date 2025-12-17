@@ -2,11 +2,15 @@
   "routes": [
     {
       "route": "/*",
-      "serve": "/index.html",
+      "serve": "index.html",
       "statusCode": 200
     }
   ],
   "navigationFallback": {
     "rewrite": "index.html"
+  },
+  "mimeTypes": {
+    ".json": "application/json",
+    ".wasm": "application/wasm"
   }
 }
