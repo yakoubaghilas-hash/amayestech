@@ -24,6 +24,7 @@
                 <ul>
                     <li><a href="#accueil" data-en="Home" data-es="Inicio" data-fr="Accueil">Accueil</a></li>
                     <li><a href="#services" data-en="Services" data-es="Servicios" data-fr="Services">Services</a></li>
+                    <li><a href="#candidature" data-en="Apply" data-es="Candidatura" data-fr="Candidature">Candidature</a></li>
                     <li><a href="#contact" data-en="Contact" data-es="Contacto" data-fr="Contact">Contact</a></li>
                 </ul>
             </nav>
@@ -178,6 +179,44 @@
                         <button class="formation-button" data-en="Learn More" data-es="Saber Más" data-fr="En Savoir Plus">En Savoir Plus</button>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Application Section -->
+        <section id="candidature" class="application">
+            <div class="container">
+                <h2 data-en="Join Our Team" data-es="Únete a Nuestro Equipo" data-fr="Rejoignez Notre Équipe">Rejoignez Notre Équipe</h2>
+                <p class="section-subtitle" data-en="We're looking for talented professionals to join our team" data-es="Estamos buscando profesionales talentosos para unirse a nuestro equipo" data-fr="Nous recherchons des professionnels talentueux pour rejoindre notre équipe">Nous recherchons des professionnels talentueux pour rejoindre notre équipe</p>
+                <form class="application-form" onsubmit="handleApplicationSubmit(event)">
+                    <div class="form-group">
+                        <label data-en="Full Name" data-es="Nombre Completo" data-fr="Nom Complet">Nom Complet</label>
+                        <input type="text" name="fullname" required placeholder="Jean Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Email" data-es="Correo Electrónico" data-fr="Email">Email</label>
+                        <input type="email" name="email" required placeholder="jean@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Phone" data-es="Teléfono" data-fr="Téléphone">Téléphone</label>
+                        <input type="tel" name="phone" required placeholder="+33 6 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Position" data-es="Posición" data-fr="Poste">Poste recherché</label>
+                        <select name="position" required>
+                            <option value="" data-en="Select a position" data-es="Selecciona un puesto" data-fr="Sélectionnez un poste" disabled selected>Sélectionnez un poste</option>
+                            <option value="cloud-engineer" data-en="Cloud Engineer" data-es="Ingeniero de Nube" data-fr="Ingénieur Cloud">Ingénieur Cloud</option>
+                            <option value="ai-specialist" data-en="AI Specialist" data-es="Especialista en IA" data-fr="Spécialiste IA">Spécialiste IA</option>
+                            <option value="data-scientist" data-en="Data Scientist" data-es="Científico de Datos" data-fr="Data Scientist">Data Scientist</option>
+                            <option value="devops-engineer" data-en="DevOps Engineer" data-es="Ingeniero DevOps" data-fr="Ingénieur DevOps">Ingénieur DevOps</option>
+                            <option value="consultant" data-en="Consultant" data-es="Consultor" data-fr="Consultant">Consultant</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Message" data-es="Mensaje" data-fr="Message">Message</label>
+                        <textarea name="message" rows="5" placeholder="Parlez-nous de vous..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" data-en="Submit Application" data-es="Enviar Candidatura" data-fr="Soumettre">Soumettre</button>
+                </form>
             </div>
         </section>
 
@@ -351,5 +390,34 @@
             } else {
                 closeChatbot();
             }
+        }
+
+        // Application form handler
+        function handleApplicationSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {
+                fullname: formData.get('fullname'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                position: formData.get('position'),
+                message: formData.get('message')
+            };
+
+            // Simulate form submission
+            console.log('Application submitted:', data);
+            
+            // Show success message
+            const currentLang = document.documentElement.lang || 'fr';
+            const successMessages = {
+                'fr': 'Merci pour votre candidature ! Nous vous recontacterons bientôt.',
+                'en': 'Thank you for your application! We will contact you soon.',
+                'es': '¡Gracias por tu candidatura! Nos pondremos en contacto pronto.'
+            };
+
+            alert(successMessages[currentLang]);
+            form.reset();
         }
     </script>
