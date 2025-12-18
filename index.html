@@ -54,15 +54,16 @@
                     <p class="hero-description" data-en="At AMAYESTECH, we specialize in secure Azure migrations with minimal downtime. Our expert team uses AI and cloud technologies to optimize your operations, reduce costs, and unlock new opportunities. We provide end-to-end support for your digital transformation with proven methodologies and industry certifications." data-es="En AMAYESTECH, nos especializamos en ayudar a las organizaciones a modernizar su infraestructura migrando a Microsoft Azure con tiempo de inactividad mínimo y máxima seguridad. Nuestro equipo de expertos aprovecha la inteligencia artificial y las tecnologías nativas en la nube para optimizar tus operaciones, reducir costos y desbloquear nuevas oportunidades comerciales. Ya sea que busques migrar sistemas heredados, crear soluciones impulsadas por IA o mejorar tu estrategia en la nube, proporcionamos soporte completo durante tu viaje de transformación digital. Con metodologías probadas y certificaciones de la industria, garantizamos que tu transición sea fluida, segura y adaptada a tus necesidades comerciales únicas." data-fr="Chez AMAYESTECH, nous nous spécialisons dans l'aide aux organisations pour moderniser leur infrastructure en migrant vers Microsoft Azure avec un temps d'arrêt minimal et une sécurité maximale. Notre équipe d'experts exploite l'intelligence artificielle et les technologies cloud-natives pour optimiser vos opérations, réduire les coûts et débloquer de nouvelles opportunités commerciales. Que vous cherchiez à migrer des systèmes hérités, à créer des solutions alimentées par l'IA ou à améliorer votre stratégie cloud, nous fournissons un support complet tout au long de votre parcours de transformation numérique. Avec des méthodologies éprouvées et des certifications de l'industrie, nous garantissons que votre transition soit fluide, sécurisée et adaptée à vos besoins commerciaux uniques.">At AMAYESTECH, we specialize in secure Azure migrations with minimal downtime. Our expert team uses AI and cloud technologies to optimize your operations, reduce costs, and unlock new opportunities. We provide end-to-end support for your digital transformation with proven methodologies and industry certifications.</p>
                     <button class="cta-button" data-en="Get Started" data-es="Comenzar" data-fr="Commencer">Commencer</button>
                 </div>
-                <div class="hero-image">
-                    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Background gradient effect -->
-                        <defs>
-                            <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0078d4;stop-opacity:0.1" />
-                                <stop offset="100%" style="stop-color:#00a4ef;stop-opacity:0.2" />
-                            </linearGradient>
-                        </defs>
+                <div class="hero-right">
+                    <div class="hero-image">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background gradient effect -->
+                            <defs>
+                                <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#0078d4;stop-opacity:0.1" />
+                                    <stop offset="100%" style="stop-color:#00a4ef;stop-opacity:0.2" />
+                                </linearGradient>
+                            </defs>
                         <rect width="300" height="300" fill="url(#cloudGradient)"/>
                         
                         <!-- Server rack on left -->
@@ -109,6 +110,15 @@
                         <circle cx="150" cy="220" r="15" fill="none" stroke="#00a4ef" stroke-width="1" opacity="0.3"/>
                         <circle cx="150" cy="220" r="20" fill="none" stroke="#0078d4" stroke-width="1" opacity="0.2"/>
                     </svg>
+                    </div>
+                    <div class="rss-feed">
+                        <h3 data-en="Microsoft AI News" data-es="Noticias de Microsoft AI" data-fr="Actualités Microsoft AI">Actualités Microsoft AI</h3>
+                        <div id="rss-container" class="rss-items">
+                            <div class="rss-loader">
+                                <p data-en="Loading news..." data-es="Cargando noticias..." data-fr="Chargement des actualités...">Chargement des actualités...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -539,7 +549,116 @@
             if (langBtn) {
                 langBtn.click();
             }
+            // Load RSS Feed
+            loadMicrosoftAIRSS();
         });
+
+        // RSS Feed Functionality
+        function loadMicrosoftAIRSS() {
+            const rssContainer = document.getElementById('rss-container');
+            
+            // Using multiple RSS sources for Microsoft AI news
+            const rssFeeds = [
+                'https://feeds.microsoft.com/en-us/mcloud/all/feed/rss',
+                'https://techcommunity.microsoft.com/t5/custom/page/page-id/Blogs_DefaultFeed/rss'
+            ];
+            
+            // Try fetching with CORS proxy
+            const corsProxy = 'https://api.allorigins.win/feed?url=';
+            const feedUrl = encodeURIComponent('https://feeds.microsoft.com/en-us/mcloud/all/feed/rss');
+            
+            fetch(corsProxy + feedUrl)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('RSS Data:', data);
+                    
+                    if (data.items && data.items.length > 0) {
+                        rssContainer.innerHTML = '';
+                        let itemsAdded = 0;
+                        
+                        // Display items filtered for AI/Azure content
+                        data.items.forEach(item => {
+                            if (itemsAdded < 5) {
+                                const titleLower = (item.title || '').toLowerCase();
+                                // Show AI, Azure, ML, Intelligence related items
+                                if (titleLower.includes('ai') || titleLower.includes('azure') || 
+                                    titleLower.includes('intelligence') || titleLower.includes('machine learning') ||
+                                    titleLower.includes('copilot') || titleLower.includes('cloud')) {
+                                    
+                                    const rssItem = document.createElement('div');
+                                    rssItem.className = 'rss-item';
+                                    const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleDateString() : 'Récent';
+                                    rssItem.innerHTML = `
+                                        <div class="rss-item-title">${item.title || 'Sans titre'}</div>
+                                        <div class="rss-item-date">${pubDate}</div>
+                                    `;
+                                    rssItem.addEventListener('click', () => {
+                                        if (item.link) window.open(item.link, '_blank');
+                                    });
+                                    rssContainer.appendChild(rssItem);
+                                    itemsAdded++;
+                                }
+                            }
+                        });
+                        
+                        // If not enough filtered items, show latest items anyway
+                        if (itemsAdded < 3) {
+                            itemsAdded = 0;
+                            data.items.forEach(item => {
+                                if (itemsAdded < 5 && rssContainer.children.length < 5) {
+                                    const rssItem = document.createElement('div');
+                                    rssItem.className = 'rss-item';
+                                    const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleDateString() : 'Récent';
+                                    rssItem.innerHTML = `
+                                        <div class="rss-item-title">${item.title || 'Sans titre'}</div>
+                                        <div class="rss-item-date">${pubDate}</div>
+                                    `;
+                                    rssItem.addEventListener('click', () => {
+                                        if (item.link) window.open(item.link, '_blank');
+                                    });
+                                    rssContainer.appendChild(rssItem);
+                                    itemsAdded++;
+                                }
+                            });
+                        }
+                        
+                        if (rssContainer.children.length === 0) {
+                            rssContainer.innerHTML = '<div class="rss-loader"><p>Aucune actualité disponible</p></div>';
+                        }
+                    } else {
+                        rssContainer.innerHTML = '<div class="rss-loader"><p>Aucune donnée trouvée</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading RSS:', error);
+                    // Fallback: Show sample news
+                    showSampleNews(rssContainer);
+                });
+        }
+
+        function showSampleNews(container) {
+            const sampleNews = [
+                { title: 'Azure AI Services: Dernières innovations', date: new Date().toLocaleDateString(), link: 'https://azure.microsoft.com/en-us/services/cognitive-services/' },
+                { title: 'Microsoft Copilot: Nouvelle génération d\'IA', date: new Date(Date.now() - 86400000).toLocaleDateString(), link: 'https://copilot.microsoft.com' },
+                { title: 'Azure OpenAI Service mise à jour', date: new Date(Date.now() - 172800000).toLocaleDateString(), link: 'https://azure.microsoft.com/en-us/products/ai-services/openai-service/' },
+                { title: 'Intelligence Artificielle et Cloud Computing', date: new Date(Date.now() - 259200000).toLocaleDateString(), link: 'https://azure.microsoft.com' },
+                { title: 'Sécurité et IA dans le cloud Azure', date: new Date(Date.now() - 345600000).toLocaleDateString(), link: 'https://azure.microsoft.com' }
+            ];
+            
+            container.innerHTML = '';
+            sampleNews.forEach(news => {
+                const rssItem = document.createElement('div');
+                rssItem.className = 'rss-item';
+                rssItem.innerHTML = `
+                    <div class="rss-item-title">${news.title}</div>
+                    <div class="rss-item-date">${news.date}</div>
+                `;
+                rssItem.addEventListener('click', () => {
+                    window.open(news.link, '_blank');
+                });
+                container.appendChild(rssItem);
+            });
+        }
 
         // Chatbot functionality
         const chatMessages = {
